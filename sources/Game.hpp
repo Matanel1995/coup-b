@@ -15,6 +15,7 @@ namespace coup{
         public:
         vector<Player*>* gamePlayers;
         unsigned int currTurn;
+        bool gameRuning;
         // Players pointers for each operation
         Player* lastStolen;
         Player* lastKilled;
@@ -23,21 +24,21 @@ namespace coup{
         Game();
         ~Game();
         // function to return all players names
-        vector<string> players();
+        vector<string> players()const;
         //Function to add new player to the game
-        void addPlayer(Player *player);
+        void addPlayer(Player *player)const;
         //Function to revive player into a role
-        void revivePlayer(Player *player);
+        void revivePlayer(Player *player)const;
         //
-        bool isPlayerTurn(const Player &player);
+        bool isPlayerTurn(const Player &player)const;
         //Function to remove player from the Game
-        void removePLayer(Player &player);
+        void removePLayer(Player &player)const;
         //function to update the curr turn
         void updateTurn();
         // Function to return player that it is his turn name  
-        string turn();
+        string turn()const;
         // Function to return the name of the winner in this game
-        string winner();
+        string winner()const;
     };
 }
 //#endif

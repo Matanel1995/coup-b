@@ -8,8 +8,12 @@ Ambassador::Ambassador(Game &game, const string &name):Player(game,name,"Ambassa
 }
 
 void Ambassador::transfer(Player &player1, Player &player2){
+    if(this->game->players().size() == 1){
+        throw std::runtime_error("Cant play with 1 player!");
+    }
     if(this->game->isPlayerTurn(*this)){
-        if(player1.isAlive == true && player2.isAlive == true){
+        this->game->gameRuning = true;
+        if(player1.isAlive && player2.isAlive){
             if(player1.money > 0){
                 player1.money--;
                 player2.money++;
@@ -30,5 +34,16 @@ void Ambassador::transfer(Player &player1, Player &player2){
 }
 
 void Ambassador::block(Player &player){
+    if(this->game->players().size() == 1){
+        throw std::runtime_error("Cant play with 1 player!");
+    }
+    if(player.lastAction == "steal"){
+        //return the money to the stolen player
+        cout << player.coins() << endl;
+        this->game->lastStolen->money += player.stolenCoins;
+        player.money-= player.stolenCoins;
+        cout << player.coins() << endl;
+        this->game->lastStolen =NULL;
+    }
     
 }

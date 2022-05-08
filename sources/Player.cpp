@@ -3,27 +3,37 @@
 
 constexpr int CoupRegCost = 7;
 constexpr int CoupAssCost = 3;
+constexpr int MustCoup = 10;
 
 using namespace coup;
 
 
-Player::Player(Game &game, const string &name, const string role){
+Player::Player(Game &game, const string &name, const string &role){
     this->money = 0;
     this->Prole = role;
     this->Name = name;
     this->lastAction = "";
     this->game = &game;
     this->isAlive = true;
+    this->coupWithSeverCoins = false;
+    this->turnPos = 0;
     // after init all parameters i will add the player to the game 
     this->game->addPlayer(this);
 
 }
-string Player::role(){
+string Player::role()const{
     return this->Prole;
 }
 
 void Player::income(){
+    if(this->game->players().size() == 1){
+        throw std::runtime_error("Cant play with 1 player!");
+    }
+    if(this->money >= MustCoup){
+        throw std::runtime_error("Have more that 10 coins must preform coup!");
+    }
     if(this->game->isPlayerTurn(*this)){
+        this->game->gameRuning = true;
         this->money++;
         this->lastAction = "income";
         //cout << this->game->currTurn << endl;
@@ -35,7 +45,14 @@ void Player::income(){
 }
 
 void Player::foreign_aid(){
+    if(this->game->players().size() == 1){
+        throw std::runtime_error("Cant play with 1 player!");
+    }
+    if(this->money >= MustCoup){
+        throw std::runtime_error("Have more that 10 coins must preform coup!");
+    }
     if(this->game->isPlayerTurn(*this)){
+        this->game->gameRuning = true;
         this->money+=2;
         this->lastAction = "foreign_aid";
         //cout << this->game->currTurn << endl;
@@ -46,19 +63,31 @@ void Player::foreign_aid(){
     }
 }
 
-int Player::coins(){
+int Player::coins()const{
     return this->money;
 }
 
 void Player::coup(Player & player){
+    if(this->game->players().size() == 1){
+        throw std::runtime_error("Cant play with 1 player!");
+    }
     if(this->game->isPlayerTurn(*this)){
-        if(player.isAlive == true){
+        if(player.isAlive){ // == true
             if(this->role() == "Assassin"){ // can coup with 3 coins!
-                if(this->coins() >= CoupAssCost){
+                if(this->coins() >= CoupRegCost){ // coup with 7 coins cant be blocked!
+                    this->money -=CoupRegCost;
+                    player.isAlive = false;
+                    this->lastAction = "coup";
+                    this->game->lastKilled = &player;
+                    this->coupWithSeverCoins = true;
+                    this->game->updateTurn();
+                }
+                else if(this->coins() >= CoupAssCost){
                     this->money -=CoupAssCost;
                     player.isAlive = false;
                     this->lastAction = "coup";
                     this->game->lastKilled = &player;
+                    this->coupWithSeverCoins = false;
                     this->game->updateTurn();
                 }
                 else{

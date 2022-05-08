@@ -10,8 +10,9 @@ namespace coup{
             Captain(Game &game, const string &name);
             //Function to block foreign_aid
             void block(Player &player);
-            Player *StolenPLayer;
+            //Player *StolenPLayer;
             // Function to steal from player
             void steal(Player &player);
+            
     };
 }

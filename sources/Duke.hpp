@@ -13,6 +13,6 @@ namespace coup{
             //Function to collect taxes
             void tax();
             //Function to block foreign_aid
-            void block(Player &player);
+            static void block(Player &player);
     };
 }

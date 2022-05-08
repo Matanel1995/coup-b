@@ -12,7 +12,7 @@ void Captain::block(Player &player){
         throw std::invalid_argument("Can block only steal");
     }
     // check if the stolen player and the stealing player still alive
-    if(game->lastStolen->isAlive == true && player.isAlive == true){
+    if(game->lastStolen->isAlive && player.isAlive){
         player.money-=2;
         game->lastStolen->money +=2;
         game->lastStolen = NULL;
@@ -20,10 +20,17 @@ void Captain::block(Player &player){
 }
 
 void Captain::steal(Player &player){
+    if(this->game->players().size() == 1){
+        throw std::runtime_error("Cant play with 1 player!");
+    }
     if(this->game->isPlayerTurn(*this)){
-        if(player.isAlive == true){
+        this->game->gameRuning = true;
+        if(player.isAlive){
             this->money += min(2,player.money);
             player.money -= min(2,player.money);
+            this->stolenCoins = min(2,player.money);
+            this->game->lastStolen = &player;
+            this->lastAction = "steal";
             this->game->updateTurn();
         }
         else{
